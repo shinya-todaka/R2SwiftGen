@@ -17,11 +17,11 @@ class R2SwiftGen {
         self.swiftGenPrefix = swiftGenPrefix
     }
     
-    private func replaceRCode2SwiftGen(fileString: String) -> String {
+    private func replaceRCode2SwiftGen(filePath: String, fileString: String) -> String {
         
         var newString = fileString
         
-        let pattern = #"(\#(rSwiftPrefix)\..*)\((.*)\)"#
+        let pattern = #"(\#(rSwiftPrefix)\..*)\((.*?)\)"#
 
         let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
@@ -52,10 +52,10 @@ class R2SwiftGen {
                 replaceBraces = false
             }
             
-            var replaceBracesCount = replaceBraces ? 2 : 0
+            let replaceBracesCount = replaceBraces ? 2 : 0
             
             guard let genCode = rCode2GenCodeDict[Rcode] else {
-                print("failed to find swift gen code from: \(Rcode)")
+                print("failed to find swift gen code from: \(Rcode), filePath: \(filePath)")
                 fatalError()
             }
             
@@ -71,17 +71,17 @@ class R2SwiftGen {
     
     func replaceFile(inputFile: URL) {
         guard let fileString = try? String(contentsOf: inputFile, encoding: .utf8) else {
-            fatalError()
+            fatalError("cannot get string of \(inputFile.absoluteString)")
         }
         
-        let newString = replaceRCode2SwiftGen(fileString: fileString)
+        let newString = replaceRCode2SwiftGen(filePath: inputFile.path, fileString: fileString)
         
         do {
             try newString.write(toFile: inputFile.path, atomically: true, encoding: .utf8)
             
-            print("success write to swift file!!!!")
+            print("success write to swift file!!!! \(inputFile.path)")
         } catch let error {
-            print(error)
+            fatalError("failed to write file to \(inputFile.path)")
         }
     }
     
