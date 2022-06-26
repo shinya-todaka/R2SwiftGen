@@ -87,12 +87,26 @@ let main = command(Option("strings", default: "Localizable.strings"),
     }
 
     r2SwiftGen.generateCodeTable(stringsFileURL: stringsFileURL)
+    
+    var failedToReplaceFiles = [String]()
 
     for file in swiftFiles {
-
-        r2SwiftGen.replaceFile(inputFile: file)
-
+        
+        do {
+            try r2SwiftGen.replaceFile(inputFile: file)
+        } catch let error {
+            print(error)
+            
+            failedToReplaceFiles.append(file.path)
+        }
+       
         print("--------------------replaced file \(file.absoluteString)-----------------------")
+    }
+    
+    print("---------------------------result-------------------------")
+    
+    for failedFile in failedToReplaceFiles {
+        print("failed to replace for some reason: \(failedFile)")
     }
 }
 

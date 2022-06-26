@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum R2SwiftGenError: Error {
+    case failedToGencode
+}
+
 class R2SwiftGen {
     let rSwiftPrefix: String
     let swiftGenPrefix: String
@@ -17,7 +21,7 @@ class R2SwiftGen {
         self.swiftGenPrefix = swiftGenPrefix
     }
     
-    private func replaceRCode2SwiftGen(filePath: String, fileString: String) -> String {
+    private func replaceRCode2SwiftGen(filePath: String, fileString: String) throws -> String {
         
         var newString = fileString
         
@@ -56,7 +60,7 @@ class R2SwiftGen {
             
             guard let genCode = rCode2GenCodeDict[Rcode] else {
                 print("failed to find swift gen code from: \(Rcode), filePath: \(filePath)")
-                fatalError()
+                throw R2SwiftGenError.failedToGencode
             }
             
             let replacingString = swiftGenPrefix + "." + genCode
@@ -69,12 +73,12 @@ class R2SwiftGen {
         return newString
     }
     
-    func replaceFile(inputFile: URL) {
+    func replaceFile(inputFile: URL) throws {
         guard let fileString = try? String(contentsOf: inputFile, encoding: .utf8) else {
             fatalError("cannot get string of \(inputFile.absoluteString)")
         }
         
-        let newString = replaceRCode2SwiftGen(filePath: inputFile.path, fileString: fileString)
+        let newString = try replaceRCode2SwiftGen(filePath: inputFile.path, fileString: fileString)
         
         do {
             try newString.write(toFile: inputFile.path, atomically: true, encoding: .utf8)
