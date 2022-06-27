@@ -25,7 +25,7 @@ class R2SwiftGen {
         
         var newString = fileString
         
-        let pattern = #"(\#(rSwiftPrefix)\..*)\((.*?)\)"#
+        let pattern = #"(\#(rSwiftPrefix)\..*?)\((.*?)\)"#
 
         let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
@@ -38,8 +38,6 @@ class R2SwiftGen {
             let end = fileString.index(start, offsetBy: result.range(at: 1).length)
             
             let RStringLocalizable = fileString[start..<end]
-            
-            print("rstring localizable: \(RStringLocalizable)")
             
             let Rcode = String(RStringLocalizable.dropFirst((rSwiftPrefix + ".").count))
             
@@ -73,7 +71,7 @@ class R2SwiftGen {
         return newString
     }
     
-    func replaceFile(inputFile: URL) throws {
+    func replaceFile(inputFile: URL) throws  {
         guard let fileString = try? String(contentsOf: inputFile, encoding: .utf8) else {
             fatalError("cannot get string of \(inputFile.absoluteString)")
         }
@@ -140,8 +138,6 @@ class R2SwiftGen {
             let swiftGenCode = keyToSwiftGenCode(key: key)
             
             rCode2GenCodeDict[RCode] = swiftGenCode
-            
-            print("key: \(key), R: \(RCode), SwiftGen: \(swiftGenCode)")
         }
     }
 }

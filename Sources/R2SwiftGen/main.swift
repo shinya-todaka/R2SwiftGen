@@ -79,9 +79,6 @@ let main = command(Option("strings", default: "Localizable.strings"),
         }
     }
 
-    print("swiftFiles.count: \(swiftFiles.count)")
-    print("strings file: \(stringsFileURL)")
-
     guard let stringsFileURL = stringsFileURL else {
         fatalError()
     }
