@@ -7,6 +7,24 @@
 
 import Foundation
 
+extension String.SubSequence {
+    func uppercasedFirst() -> String.SubSequence {
+    guard let first = self.first else {
+      return self
+    }
+    return first.uppercased() + self.dropFirst()
+  }
+    
+    func lowercasedFirst() -> String.SubSequence {
+        guard let first = self.first else {
+            return self
+        }
+        
+        return first.lowercased() + self.dropFirst()
+    }
+}
+
+
 enum R2SwiftGenError: Error {
     case failedToGencode
 }
@@ -98,10 +116,30 @@ class R2SwiftGen {
         
         let firstElement = separatedByDot.removeFirst()
         
-        new += firstElement.first!.lowercased() + firstElement.dropFirst()
+        new += firstElement.lowercasedFirst()
         
         for element in separatedByDot {
-            new += element.first!.uppercased() + element.dropFirst()
+            new += element.uppercasedFirst()
+        }
+        
+        return new
+    }
+    
+    func separateByUnderBar(element: String.SubSequence) -> String {
+        var new = ""
+        
+        var separatedByDot = element.split(separator: "_")
+        
+        guard separatedByDot.count > 1 else {
+            return String(element)
+        }
+        
+        let firstElement = separatedByDot.removeFirst()
+        
+        new += firstElement.lowercasedFirst()
+        
+        for element in separatedByDot {
+            new += element.uppercasedFirst()
         }
         
         return new
@@ -116,10 +154,10 @@ class R2SwiftGen {
             return key.first!.lowercased() + key.dropFirst()
         }
         
-        let lastElement = separatedByDot.removeLast()
+        let lastElement = separateByUnderBar(element: separatedByDot.removeLast())
         
         for element in separatedByDot {
-            new += element.first!.uppercased() + element.dropFirst() + "."
+            new += element.uppercasedFirst() + "."
         }
         
         new += (lastElement.first!.lowercased() + lastElement.dropFirst())
