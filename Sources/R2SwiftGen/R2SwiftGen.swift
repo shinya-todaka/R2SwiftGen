@@ -122,10 +122,12 @@ class R2SwiftGen {
     func keyToRCode (key: String) -> String {
         var new = ""
         
-        var separatedByDot = key.split(separator: ".")
+        let _key = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        var separatedByDot = _key.split(separator: ".")
         
         guard separatedByDot.count > 1 else {
-            return key
+            return _key
         }
         
         let firstElement = separatedByDot.removeFirst()
