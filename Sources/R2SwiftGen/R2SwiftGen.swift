@@ -99,7 +99,10 @@ class R2SwiftGen {
             
             let replacingString = swiftGenPrefix + "." + genCode
             
-            newString.replaceSubrange(fileString.index(start, offsetBy: replacedOffset)..<fileString.index(end, offsetBy: replacedOffset + replaceBracesCount), with: replacingString)
+            let replaceStartIndex = fileString.index(start, offsetBy: replacedOffset)
+            let replaceEndIndex = fileString.index(end, offsetBy: replacedOffset + replaceBracesCount)
+            
+            newString = newString.replacingCharacters(in: replaceStartIndex..<replaceEndIndex, with: replacingString)
             
             replacedOffset += replacingString.count - RStringLocalizable.count - replaceBracesCount
         }
