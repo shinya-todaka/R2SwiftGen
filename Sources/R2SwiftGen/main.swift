@@ -3,26 +3,6 @@ import Commander
 
 let currentDir = FileManager.default.currentDirectoryPath
 
-//func getIgnoreFiles(gitignoreFileURL: URL?) -> [URL] {
-//
-//    guard let gitignoreFileURL = gitignoreFileURL else {
-//        return []
-//    }
-//
-//    do {
-//        let string = try String(contentsOf: gitignoreFileURL)
-//
-//        for line in string.split(separator: "\n") {
-//            let url = (currentDir as NSString).appendingPathComponent(line)
-//        }
-//
-//    } catch let error {
-//        print(error)
-//    }
-//
-//    return []
-//}
-
 let main = command(Option("strings", default: "Localizable.strings"),
                    Option("searchDir", default: ""),
                    Option("rPrefix", default: "R.string.localizable"),
@@ -35,10 +15,6 @@ let main = command(Option("strings", default: "Localizable.strings"),
     guard let strings = stringsFileURL, strings.pathExtension == "strings" else {
         fatalError()
     }
-    
-//    let gitignoreFile = (currentDir as NSString).appendingPathComponent(".gitignore")
-//
-//    let gitignoreFiles = getIgnoreFiles(gitignoreFileURL: URL(fileURLWithPath: gitignoreFile))
     
     let r2SwiftGen = R2SwiftGen(rswiftPrefix: rprefix, swiftGenPrefix: swiftGenPrefix)
     

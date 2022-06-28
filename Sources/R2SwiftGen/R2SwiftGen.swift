@@ -24,7 +24,25 @@ extension String.SubSequence {
     }
 }
 
-
+extension String {
+    func lowerFirstWord() -> String {
+      guard !self.isEmpty else { return "" }
+      let characterSet = CharacterSet.uppercaseLetters
+      let scalars = self.unicodeScalars
+      let start = scalars.startIndex
+      var idx = start
+      while idx < scalars.endIndex, let scalar = UnicodeScalar(scalars[idx].value), characterSet.contains(scalar) {
+        idx = scalars.index(after: idx)
+      }
+      if idx > scalars.index(after: start) && idx < scalars.endIndex,
+        let scalar = UnicodeScalar(scalars[idx].value),
+        CharacterSet.lowercaseLetters.contains(scalar) {
+        idx = scalars.index(before: idx)
+      }
+      let transformed = String(scalars[start..<idx]).lowercased() + String(scalars[idx..<scalars.endIndex])
+      return transformed
+    }
+}
 enum R2SwiftGenError: Error {
     case failedToGencode
 }
@@ -160,7 +178,7 @@ class R2SwiftGen {
             new += element.uppercasedFirst() + "."
         }
         
-        new += (lastElement.first!.lowercased() + lastElement.dropFirst())
+        new += lastElement.lowerFirstWord()
         
         return new
     }
