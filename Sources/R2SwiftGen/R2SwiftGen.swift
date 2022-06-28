@@ -19,7 +19,6 @@ extension String.SubSequence {
         guard let first = self.first else {
             return self
         }
-        
         return first.lowercased() + self.dropFirst()
     }
 }
@@ -61,7 +60,7 @@ class R2SwiftGen {
         
         var newString = fileString
         
-        let pattern = #"(\#(rSwiftPrefix)\..*?)\((.*?)\)"#
+        let pattern = #"(\#(rSwiftPrefix)\..*?)\(([.|\s|\S]*?)\)"#
 
         let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
@@ -70,25 +69,19 @@ class R2SwiftGen {
         var replacedOffset = 0
 
         for result in results {
-            let start = fileString.index(fileString.startIndex, offsetBy: result.range(at: 1).location)
-            let end = fileString.index(start, offsetBy: result.range(at: 1).length)
+            let start = newString.index(newString.startIndex, offsetBy: result.range(at: 1).location + replacedOffset)
+            let end = newString.index(start, offsetBy: result.range(at: 1).length)
             
-            let RStringLocalizable = fileString[start..<end]
+            let matchedRString = newString[start..<end]
             
-            let Rcode = String(RStringLocalizable.dropFirst((rSwiftPrefix + ".").count))
+            let Rcode = String(matchedRString.dropFirst((rSwiftPrefix + ".").count))
             
-            let paramsElementStart = fileString.index(fileString.startIndex, offsetBy: result.range(at: 2).location)
-            let paramsElementEnd = fileString.index(paramsElementStart, offsetBy: result.range(at: 2).length)
+            let paramsElementStart = newString.index(newString.startIndex, offsetBy: result.range(at: 2).location + replacedOffset)
+            let paramsElementEnd = newString.index(paramsElementStart, offsetBy: result.range(at: 2).length)
             
-            let paramsString = fileString[paramsElementStart..<paramsElementEnd]
+            let paramsString = newString[paramsElementStart..<paramsElementEnd]
             
-            var replaceBraces = false
-            
-            if paramsString == "" {
-                replaceBraces = true
-            } else {
-                replaceBraces = false
-            }
+            let replaceBraces = paramsString == ""
             
             let replaceBracesCount = replaceBraces ? 2 : 0
             
@@ -99,12 +92,12 @@ class R2SwiftGen {
             
             let replacingString = swiftGenPrefix + "." + genCode
             
-            let replaceStartIndex = fileString.index(start, offsetBy: replacedOffset)
-            let replaceEndIndex = fileString.index(end, offsetBy: replacedOffset + replaceBracesCount)
+            let replaceStartIndex = start
+            let replaceEndIndex = newString.index(replaceStartIndex, offsetBy: matchedRString.count + replaceBracesCount)
             
             newString = newString.replacingCharacters(in: replaceStartIndex..<replaceEndIndex, with: replacingString)
             
-            replacedOffset += replacingString.count - RStringLocalizable.count - replaceBracesCount
+            replacedOffset += replacingString.count - matchedRString.count - replaceBracesCount
         }
         
         return newString
