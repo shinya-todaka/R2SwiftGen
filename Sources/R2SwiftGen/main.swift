@@ -22,8 +22,6 @@ let main = command(Option("strings", default: "Localizable.strings"),
     
     let vendorPath = (currentDir as NSString).appendingPathComponent("vendor")
     
-    let spmToolsPath = (currentDir as NSString).appendingPathComponent("SwiftPMTools")
-    
     print("currentDir: \(currentDir), stringsFileURL: \(stringsFileURL), rPrefix: \(rprefix), swiftGenPrefix: \(swiftGenPrefix), podPath: \(podPath), vendorPath: \(vendorPath)")
 
     if let enumerator = FileManager.default.enumerator(at: currentDirURL, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
@@ -33,12 +31,10 @@ let main = command(Option("strings", default: "Localizable.strings"),
 
                 let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? true
                 if pathExtension == "swift" {
-                    if !fileURL.absoluteString.hasSuffix("main.swift") &&
-                        !fileURL.absoluteString.hasSuffix("generated.swift") &&
+                    if  !fileURL.absoluteString.hasSuffix("generated.swift") &&
                         !isDirectory,
                         !fileURL.path.hasPrefix(podPath) &&
-                        !fileURL.path.hasPrefix(vendorPath) &&
-                        !fileURL.path.hasPrefix(spmToolsPath){
+                        !fileURL.path.hasPrefix(vendorPath) {
                         swiftFiles.append(fileURL)
                     }
                 }
