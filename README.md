@@ -7,3 +7,5 @@ R.swift を使っているコードを SwiftGenのコードに置き換えるツ
 ## 使い方
 
 R2SwiftGen --strings ./Localizable.strings  --rPrefix hogehoge --swiftGenPrefix hogehoge
+
+--rPrefixはデフォルトで R.string.localizable --swiftGenPrefixはデフォルトで L10n
